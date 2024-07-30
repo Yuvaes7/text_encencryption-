@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Encryption</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        h1 {
+            color: #0056b3;
+        }
+        .container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 500px;
+            width: 100%;
+            margin: 20px;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input {
+            width: calc(100% - 22px); /* Adjusted for border padding */
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #0056b3;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        button:hover {
+            background-color: #004494;
+        }
+        p {
+            background-color: #e9ecef;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Text Encryption</h1>
+        <form id="encryption-form">
+            <label for="text">Text to Encrypt:</label>
+            <input type="text" id="text" name="text" required>
+            <button type="button" onclick="encryptText()">Encrypt</button>
+        </form>
+        <p id="encrypted-text"></p>
+    </div>
+    <div class="container">
+        <h1>Text Decryption</h1>
+        <form id="decryption-form">
+            <label for="encryptedText">Encrypted Text:</label>
+            <input type="text" id="encryptedText" name="encryptedText" required>
+            <button type="button" onclick="decryptText()">Decrypt</button>
+        </form>
+        <p id="decrypted-text"></p>
+    </div>
+
+    <script>
+        async function encryptText() {
+            const text = document.getElementById('text').value;
+            try {
+                const response = await fetch('/encrypt', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ text })
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('encrypted-text').innerText = `Encrypted Text: ${data.encryptedText}`;
+                } else {
+                    const errorData = await response.json();
+                    console.error('Error:', errorData);
+                }
+            } catch (error) {
+                console.error('Fetch error:', error);
+            }
+        }
+
+        async function decryptText() {
+            const encryptedText = document.getElementById('encryptedText').value;
+            try {
+                const response = await fetch('/decrypt', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ encryptedText })
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('decrypted-text').innerText = `Decrypted Text: ${data.decryptedText}`;
+                } else {
+                    const errorData = await response.json();
+                    console.error('Error:', errorData);
+                }
+            } catch (error) {
+                console.error('Fetch error:', error);
+            }
+        }
+    </script>
+</body>
+</html>
